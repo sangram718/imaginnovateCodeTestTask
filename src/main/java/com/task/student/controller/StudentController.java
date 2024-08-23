@@ -41,7 +41,7 @@ public class StudentController {
 
     @PutMapping("student/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Student createStudent(@Valid @PathVariable Integer id,
+    public Student updateStudent(@Valid @PathVariable Integer id,
             @RequestParam @NotNull @Min(value = 0, message = "Marks should be between 0 and 100") @Max(value = 100, message = "Marks should be between 0 and 100") Integer marks1,
             @RequestParam @NotNull @Min(value = 0, message = "Marks should be between 0 and 100") @Max(value = 100, message = "Marks should be between 0 and 100") Integer marks2,
             @RequestParam @NotNull @Min(value = 0, message = "Marks should be between 0 and 100") @Max(value = 100, message = "Marks should be between 0 and 100") Integer marks3) {
