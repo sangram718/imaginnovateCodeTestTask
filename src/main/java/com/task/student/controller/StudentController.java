@@ -45,7 +45,7 @@ public class StudentController {
 
     @PutMapping("student/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> updateStudent(@PathVariable Integer id,
+    public ResponseEntity<?> updateStudentMarks(@PathVariable Integer id,
             @RequestParam Integer marks1,
             @RequestParam Integer marks2,
             @RequestParam Integer marks3) {
@@ -59,6 +59,6 @@ public class StudentController {
             return ResponseEntity.badRequest().body(new ErrorResponse("Marks must be between 0 and 100."));
         }
 
-        return new ResponseEntity<>(studentService.updateStudent(id, marks1, marks2, marks3), HttpStatus.CREATED);
+        return new ResponseEntity<>(studentService.updateStudentMarks(id, marks1, marks2, marks3), HttpStatus.CREATED);
     }
 }
