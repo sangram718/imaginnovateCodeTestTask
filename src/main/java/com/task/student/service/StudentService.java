@@ -22,7 +22,7 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public Student updateStudent(@Valid Integer id, Integer marks1, Integer marks2, Integer marks3) {
+    public Student updateStudentMarks(@Valid Integer id, Integer marks1, Integer marks2, Integer marks3) {
 
         Optional<Student> existingStudent = studentRepository.findById(id);
         Student student = existingStudent.get();
