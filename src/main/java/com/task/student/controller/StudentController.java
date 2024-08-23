@@ -5,21 +5,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.task.student.model.ErrorResponse;
 import com.task.student.model.Student;
 import com.task.student.service.StudentService;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.Period;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -35,24 +30,35 @@ public class StudentController {
 
     @PostMapping("student")
     @ResponseStatus(HttpStatus.CREATED)
-    public Student createStudent(@Valid @RequestBody Student student) {
-        return studentService.createStudent(student);
+    public ResponseEntity<?> createStudent(@Valid @RequestBody Student student) {
+        // Validate DOB
+        if (student.getDob() != null) {
+            int age = Period.between(student.getDob(), LocalDate.now()).getYears();
+            if (age < 15 || age > 20) {
+                return ResponseEntity.badRequest().body(new ErrorResponse("Age must be between 15 and 20 years."));
+            }
+        }
+
+        Student savedStudent = studentService.createStudent(student);
+        return new ResponseEntity<>(savedStudent, HttpStatus.CREATED);
     }
 
     @PutMapping("student/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Student updateStudent(@Valid @PathVariable Integer id,
-            @RequestParam @NotNull @Min(value = 0, message = "Marks should be between 0 and 100") @Max(value = 100, message = "Marks should be between 0 and 100") Integer marks1,
-            @RequestParam @NotNull @Min(value = 0, message = "Marks should be between 0 and 100") @Max(value = 100, message = "Marks should be between 0 and 100") Integer marks2,
-            @RequestParam @NotNull @Min(value = 0, message = "Marks should be between 0 and 100") @Max(value = 100, message = "Marks should be between 0 and 100") Integer marks3) {
+    public ResponseEntity<?> updateStudent(@PathVariable Integer id,
+            @RequestParam Integer marks1,
+            @RequestParam Integer marks2,
+            @RequestParam Integer marks3) {
 
         if (marks1 == null || marks2 == null || marks3 == null) {
-            throw new IllegalArgumentException("All marks are mandatory");
+            System.out.println("marks");
+            return ResponseEntity.badRequest().body(new ErrorResponse("All marks are mandatory."));
         }
         if (marks1 < 0 || marks1 > 100 || marks2 < 0 || marks2 > 100 || marks3 < 0 || marks3 > 100) {
-            throw new IllegalArgumentException("Marks must be between 0 and 100");
+            System.out.println("marks");
+            return ResponseEntity.badRequest().body(new ErrorResponse("Marks must be between 0 and 100."));
         }
 
-        return studentService.updateStudent(id, marks1, marks2, marks3);
+        return new ResponseEntity<>(studentService.updateStudent(id, marks1, marks2, marks3), HttpStatus.CREATED);
     }
 }
